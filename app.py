@@ -1,5 +1,5 @@
 import streamlit as st
-from services import obtener_cuentas
+from services import obtener_cuentas, transaccion
 
 def main():
 
@@ -37,13 +37,14 @@ def main():
             "nombre_cuenta": nombre_cuenta
         }
 
+    descripcion_transaccion = st.text_area("Descripción de la transacción", "")
+
     monto = st.number_input("Monto de la transacción", min_value=1, step=50)
 
     if st.button("Realizar Transacción"):
             if diccionario_cargo["cuenta_id"] != diccionario_abono["cuenta_id"]:
                 
-                #falta implemetar la logica de la transaccion
-                st.success(f"✅ Transacción realizada correctamente, monto: {monto}")
+                transaccion(diccionario_cargo, diccionario_abono, monto, descripcion_transaccion)
 
             else:
                 st.warning("⚠️ Transacción invalida: Ingrese dos cuentas diferentes")
