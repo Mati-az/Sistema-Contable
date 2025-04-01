@@ -51,4 +51,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-#Para correr la aplicación poner streamlit run app.py
+#Para correr la aplicación poner en el terminal: streamlit run app.py
