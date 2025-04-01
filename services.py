@@ -11,7 +11,7 @@ def obtener_cuentas():
             cur = conn.cursor()
             # Consulta SQL para obtener todas las cuentas
             cur.execute("SELECT cuenta_id, nombre FROM cuentas ORDER BY 1")
-            cuentas = cur.fetchall()  # Recuperamos todas las filas
+            cuentas = cur.fetchall()  # Recuperamos todas las filas con el fetchall, una lista de tuplas
             cur.close()
         except Exception as e:
             st.write(f"Error al obtener las cuentas: {e}")
@@ -30,12 +30,14 @@ def transaccion(diccionario_cargo, diccionario_abono, monto, descripcion):
             cur.execute("SELECT tipo FROM CUENTAS WHERE cuenta_id = %s", (diccionario_cargo["cuenta_id"],))
             tipo_cuenta_cargo = cur.fetchone()
             
+            # Como el fetchone lo guarda en una tupla (,) entonces solo necesitamos el primer dato
             if tipo_cuenta_cargo:
                 tipo_cuenta_cargo = tipo_cuenta_cargo[0]
 
             cur.execute("SELECT tipo FROM CUENTAS WHERE cuenta_id = %s", (diccionario_abono["cuenta_id"],))
             tipo_cuenta_abono = cur.fetchone()
 
+            # Acceder al primer dato de la tupla
             if tipo_cuenta_abono:
                 tipo_cuenta_abono = tipo_cuenta_abono[0]
 
@@ -52,6 +54,7 @@ def transaccion(diccionario_cargo, diccionario_abono, monto, descripcion):
                 if saldo_cuenta_cargo:
                     saldo_cuenta_cargo = saldo_cuenta_cargo[0]
 
+                # si el monto es mayor que el saldo disponible accede al error
                 if monto > saldo_cuenta_cargo:
                     st.error(f"Error! revisar la cuenta {diccionario_cargo["cuenta_id"]}: {diccionario_cargo["nombre_cuenta"]}" )
                     return
@@ -60,9 +63,11 @@ def transaccion(diccionario_cargo, diccionario_abono, monto, descripcion):
                 cur.execute("SELECT saldo FROM CUENTAS WHERE cuenta_id = %s", (diccionario_abono["cuenta_id"],))
                 saldo_cuenta_abono = cur.fetchone()
 
+                # Acceder al primer valor de la tupla
                 if saldo_cuenta_abono:
                     saldo_cuenta_abono = saldo_cuenta_abono[0]
           
+                # si el monto es mayor que el saldo disponible accede al error
                 if monto > saldo_cuenta_abono:
                     st.error(f"Saldo insuficiente en la cuenta {diccionario_abono["cuenta_id"]}: {diccionario_abono["nombre_cuenta"]}")
                     return
@@ -81,6 +86,7 @@ def transaccion(diccionario_cargo, diccionario_abono, monto, descripcion):
 
             # Registramos la transacción
             cur.execute("INSERT INTO transacciones(descripcion) VALUES (%s) RETURNING transaccion_id", (descripcion,))
+            # Para recuperar el transaccion_id que se acaba de crear (dato de tipo serial)
             transaccion_id = cur.fetchone()[0]
             conn.commit()
 
