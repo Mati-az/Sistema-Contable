@@ -11,40 +11,28 @@ def main():
 
     lista_cuentas = [f"{cuenta[0]} - {cuenta[1]}" for cuenta in cuentas]
 
-    # Crear una caja de selección para la cuenta de cargo
+    # Crear una caja de selección para la cuenta de cargo y abono
     cuenta_cargo = st.selectbox("Cuenta de Cargo", lista_cuentas)
-
-    if cuenta_cargo:
-        cuenta_id = int(cuenta_cargo.split(' - ')[0])  # Obtener cuenta_id
-        nombre_cuenta = cuenta_cargo.split(' - ')[1]  # Obtener nombre de la cuenta
-
-        # Guardar los valores como un diccionario
-        diccionario_cargo = {
-            "cuenta_id": cuenta_id,
-            "nombre_cuenta": nombre_cuenta
-        }
-
-    # Crear una caja de selección para la cuenta de abono
     cuenta_abono = st.selectbox("Cuenta de Abono", lista_cuentas)
 
+    # Recuperar el codigo de las cuentas
+    if cuenta_cargo:
+        cuenta_cargo_id = int(cuenta_cargo.split(' - ')[0])
+
     if cuenta_abono:
-        cuenta_id = int(cuenta_abono.split(' - ')[0])  # Obtener cuenta_id
-        nombre_cuenta = cuenta_abono.split(' - ')[1]  # Obtener nombre de la cuenta
-
-        # Guardar los valores como un diccionario
-        diccionario_abono = {
-            "cuenta_id": cuenta_id,
-            "nombre_cuenta": nombre_cuenta
-        }
-
+        cuenta_abono_id = int(cuenta_abono.split(' - ')[0])
+    
+    # Descripción de la transacción
     descripcion_transaccion = st.text_area("Descripción de la transacción", "")
 
+    # Monto de la transacción
     monto = st.number_input("Monto de la transacción", min_value=1, step=100)
 
+    # Boton para la transacción
     if st.button("Realizar Transacción"):
-            if diccionario_cargo["cuenta_id"] != diccionario_abono["cuenta_id"]:
+            if cuenta_cargo_id != cuenta_abono_id:
                 
-                transaccion(diccionario_cargo["cuenta_id"], diccionario_abono["cuenta_id"], monto, descripcion_transaccion)
+                transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion_transaccion)
 
             else:
                 st.warning("⚠️ Transacción invalida: Ingrese dos cuentas diferentes")

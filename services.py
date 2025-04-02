@@ -31,6 +31,7 @@ def obtener_cuentas():
             conn.close()
     return cuentas
 
+# Funcion para obtener el tipo de cuenta
 def obtener_tipo(cuenta_id):
     
     conn = connect_to_db()
@@ -54,6 +55,7 @@ def obtener_tipo(cuenta_id):
     else:
         return None
     
+# Funcion para obtener el saldo de la cuenta
 def obtener_saldo(cuenta_id):
 
     conn = connect_to_db()
