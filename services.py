@@ -188,3 +188,53 @@ def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
             st.write(f"Error al realizar la transaccion: {e}")
         finally:
             conn.close()
+
+#Función para el estado de situación financiera / Balance general
+def get_balance_general():
+    conn = connect_to_db()
+    if conn:
+        try:
+            query = """
+            WITH utilidades_acumuladas AS (
+                SELECT 
+                    SUM(CASE WHEN tipo = 'Ingresos' THEN saldo ELSE 0 END) -
+                    SUM(CASE WHEN tipo = 'Gastos' THEN saldo ELSE 0 END) AS utilidades
+                FROM cuentas
+                WHERE tipo IN ('Ingresos', 'Gastos')
+            )
+            SELECT 
+                cuenta_id,
+                nombre,
+                tipo,
+                saldo,
+                CASE 
+                    WHEN tipo = 'Activo' AND CAST(cuenta_id AS TEXT) ~ '^[12]' THEN 'Activo Corriente'
+                    WHEN tipo = 'Activo' AND CAST(cuenta_id AS TEXT) ~ '^3' THEN 'Activo No Corriente'
+                    WHEN tipo = 'Pasivo' AND CAST(cuenta_id AS TEXT) ~ '^4' AND cuenta_id NOT IN (45, 49) THEN 'Pasivo Corriente'
+                    WHEN tipo = 'Pasivo' AND cuenta_id IN (45, 49) THEN 'Pasivo No Corriente'
+                    WHEN tipo = 'Patrimonio' THEN 'Patrimonio'
+                END AS categoria
+            FROM cuentas
+            WHERE saldo <> 0
+            
+            UNION ALL
+            
+            SELECT 
+                NULL AS cuenta_id, 
+                'Utilidades Acumuladas' AS nombre, 
+                'Patrimonio' AS tipo, 
+                utilidades AS saldo, 
+                'Patrimonio' AS categoria
+            FROM utilidades_acumuladas
+            WHERE utilidades <> 0
+
+            ORDER BY categoria, cuenta_id NULLS LAST;
+            """
+            
+            df = pd.read_sql(query, conn)
+            conn.close()
+            return df
+        except Exception as e:
+            st.write(f"Error al generar el estado de situación financiera: {e}")
+        finally:
+            conn.close()
