@@ -39,12 +39,12 @@ def main():
 
     descripcion_transaccion = st.text_area("Descripción de la transacción", "")
 
-    monto = st.number_input("Monto de la transacción", min_value=1, step=50)
+    monto = st.number_input("Monto de la transacción", min_value=1, step=100)
 
     if st.button("Realizar Transacción"):
             if diccionario_cargo["cuenta_id"] != diccionario_abono["cuenta_id"]:
                 
-                transaccion(diccionario_cargo, diccionario_abono, monto, descripcion_transaccion)
+                transaccion(diccionario_cargo["cuenta_id"], diccionario_abono["cuenta_id"], monto, descripcion_transaccion)
 
             else:
                 st.warning("⚠️ Transacción invalida: Ingrese dos cuentas diferentes")
