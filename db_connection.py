@@ -1,4 +1,5 @@
 import psycopg2
+import os
 from psycopg2 import sql
 
 def connect_to_db():
@@ -9,7 +10,7 @@ def connect_to_db():
             port="5432",             # Puerto por defecto
             dbname="Sistema Contable", # Nombre de la base de datos
             user="postgres",       # Usuario de la base de datos
-            password="1234" # Contraseña
+            password=os.getenv("DB_PASSWORD", "1234") # Contraseña se obtiene de la variable de entorno DB_PASSWORD, por defecto es 1234
         )
         return conn
     except Exception as e:
