@@ -2,7 +2,7 @@ import streamlit as st
 from services import obtener_cuentas, transaccion
 
 # Titulo
-st.title("Sistema Contable")
+st.title("🔄Transacciones")
 
 # Obtener las cuentas de la base de datos
 cuentas = obtener_cuentas()
