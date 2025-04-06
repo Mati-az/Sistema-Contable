@@ -26,7 +26,7 @@ BEGIN
 END $$;
 
 -- Insertar cuentas del Activo
-INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
+INSERT INTO cuentas (cuenta_id, nombre, tipo, naturaleza) VALUES
 (10, 'Efectivo', 'Activo', 'Deudora'),
 (11, 'Inversiones Financieras', 'Activo', 'Deudora'),
 (12, 'Cuentas Por Cobrar Comerciales - Terceros', 'Activo', 'Deudora'),
@@ -54,10 +54,9 @@ INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (36, 'Desvalorización De Activo Inmovilizado', 'Activo', 'Acreedora'),
 (37, 'Activo Diferido', 'Activo', 'Deudora'),
 (38, 'Otros Activos', 'Activo', 'Deudora'),
-(39, 'Depreciación, Amortización Y Agotamiento Acumulado', 'Activo', 'Acreedora');
+(39, 'Depreciación, Amortización Y Agotamiento Acumulado', 'Activo', 'Acreedora'),
 
 -- Insertar cuentas del Pasivo
-INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (40, 'Tributos Y Aportes Al Sistema De Pensiones Y De Salud Por Pagar', 'Pasivo', 'Acreedora'),
 (41, 'Remuneraciones Y Participaciones Por Pagar', 'Pasivo', 'Acreedora'),
 (42, 'Cuentas Por Pagar Comerciales – Terceros', 'Pasivo', 'Acreedora'),
@@ -67,19 +66,17 @@ INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (46, 'Cuentas Por Pagar Diversas – Terceros', 'Pasivo', 'Acreedora'),
 (47, 'Cuentas Por Pagar Diversas – Relacionadas', 'Pasivo', 'Acreedora'),
 (48, 'Provisiones', 'Pasivo', 'Acreedora'),
-(49, 'Pasivo Diferido', 'Pasivo', 'Acreedora');
+(49, 'Pasivo Diferido', 'Pasivo', 'Acreedora'),
 
 -- Insertar cuentas del Patrimonio
-INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (50, 'Capital', 'Patrimonio', 'Acreedora'),
 (51, 'Acciones De Inversión', 'Patrimonio', 'Acreedora'),
 (52, 'Capital Adicional', 'Patrimonio', 'Acreedora'),
 (56, 'Resultados No Realizados', 'Patrimonio', 'Acreedora'),
 (57, 'Excedente De Revaluación', 'Patrimonio', 'Acreedora'),
-(58, 'Reservas', 'Patrimonio', 'Acreedora');
+(58, 'Reservas', 'Patrimonio', 'Acreedora'),
 
 -- Insertar cuentas de Gastos
-INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (60, 'Compras', 'Gastos', 'Deudora'),
 (61, 'Variación De Existencias', 'Gastos', 'Deudora'),
 (62, 'Gastos De Personal, Directores Y Gerentes', 'Gastos', 'Deudora'),
@@ -89,10 +86,9 @@ INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (66, 'Pérdida Por Medición De Activos No Financieros Al Valor Razonable', 'Gastos', 'Deudora'),
 (67, 'Gastos Financieros', 'Gastos', 'Deudora'),
 (68, 'Valuación Y Deterioro De Activos Y Provisiones', 'Gastos', 'Deudora'),
-(69, 'Costo De Ventas', 'Gastos', 'Deudora');
+(69, 'Costo De Ventas', 'Gastos', 'Deudora'),
 
 -- Insertar cuentas de Ingresos
-INSERT INTO cuentas (cuenta_id, nombre, tipo) VALUES
 (70, 'Ventas', 'Ingresos', 'Acreedora'),
 (71, 'Variación De La Producción Almacenada', 'Ingresos', 'Acreedora'),
 (72, 'Producción De Activo Inmovilizado', 'Ingresos', 'Acreedora'),

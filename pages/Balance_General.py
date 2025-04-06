@@ -1,12 +1,15 @@
 import streamlit as st
 import pandas as pd
-from services import get_balance_general
+from services import get_balance_general, get_db_version
 
 # Título del reporte
 st.title("📊 Estado de Situación Financiera")
 
+# Primero obtén un pequeño valor que cambie cuando cambia la base de datos
+db_version = get_db_version()
+
 # Obtener datos
-df = get_balance_general()
+df = get_balance_general(db_version)
 
 if df is None or df.empty:
     st.warning("⚠ No hay cuentas con saldo distinto de 0.")

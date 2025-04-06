@@ -94,6 +94,15 @@ def obtener_saldo(cuenta_id):
     else:
         return None
     
+def get_db_version():
+    conn = connect_to_db()
+    query = "SELECT COUNT(*) FROM transacciones"
+    cursor = conn.cursor()
+    cursor.execute(query)
+    result = cursor.fetchone()
+    cursor.close()
+    return result[0]
+
 
 # Función para realizar la transaccion entre cuentas
 def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
@@ -175,24 +184,40 @@ def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
         finally:
             conn.close()
 
-#Función para el estado de situación financiera / Balance general
-def get_balance_general():
+# Función para el estado de situación financiera / Balance general
+@st.cache_data
+def get_balance_general(db_version):
     conn = connect_to_db()
     if conn:
         try:
             query = """
-            WITH utilidades_acumuladas AS (
-                SELECT 
-                    SUM(CASE WHEN tipo = 'Ingresos' THEN saldo ELSE 0 END) -
-                    SUM(CASE WHEN tipo = 'Gastos' THEN saldo ELSE 0 END) AS utilidades
+            WITH cuentas_ajustadas AS (
+                SELECT
+                    cuenta_id,
+                    nombre,
+                    tipo,
+                    -- Ajustar el saldo según la naturaleza
+                    CASE 
+                        WHEN (tipo IN ('Activo', 'Gastos') AND naturaleza = 'Deudora') OR
+                             (tipo IN ('Pasivo', 'Patrimonio', 'Ingresos') AND naturaleza = 'Acreedora')
+                        THEN saldo
+                        ELSE saldo * -1
+                    END AS saldo_ajustado,
+                    naturaleza
                 FROM cuentas
+            ),
+            utilidades_acumuladas AS (
+                SELECT 
+                    SUM(CASE WHEN tipo = 'Ingresos' THEN saldo_ajustado ELSE 0 END) -
+                    SUM(CASE WHEN tipo = 'Gastos' THEN saldo_ajustado ELSE 0 END) AS utilidades
+                FROM cuentas_ajustadas
                 WHERE tipo IN ('Ingresos', 'Gastos')
             )
             SELECT 
                 cuenta_id,
                 nombre,
                 tipo,
-                saldo,
+                saldo_ajustado AS saldo,
                 CASE 
                     WHEN tipo = 'Activo' AND CAST(cuenta_id AS TEXT) ~ '^[12]' THEN 'Activo Corriente'
                     WHEN tipo = 'Activo' AND CAST(cuenta_id AS TEXT) ~ '^3' THEN 'Activo No Corriente'
@@ -200,16 +225,16 @@ def get_balance_general():
                     WHEN tipo = 'Pasivo' AND cuenta_id IN (45, 49) THEN 'Pasivo No Corriente'
                     WHEN tipo = 'Patrimonio' THEN 'Patrimonio'
                 END AS categoria
-            FROM cuentas
-            WHERE saldo <> 0
-            
+            FROM cuentas_ajustadas
+            WHERE saldo_ajustado <> 0
+
             UNION ALL
-            
+
             SELECT 
                 NULL AS cuenta_id, 
                 'Utilidades Acumuladas' AS nombre, 
                 'Patrimonio' AS tipo, 
-                utilidades AS saldo, 
+                utilidades AS saldo,
                 'Patrimonio' AS categoria
             FROM utilidades_acumuladas
             WHERE utilidades <> 0
@@ -218,7 +243,6 @@ def get_balance_general():
             """
             
             df = pd.read_sql(query, conn)
-            conn.close()
             return df
         except Exception as e:
             st.write(f"Error al generar el estado de situación financiera: {e}")
