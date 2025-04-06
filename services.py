@@ -55,6 +55,21 @@ def obtener_tipo(cuenta_id):
     else:
         return None
     
+def obtener_naturaleza(cuenta_id):
+    conn = connect_to_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+            query = "SELECT naturaleza FROM cuentas WHERE cuenta_id = %s"
+            cur.execute(query, (cuenta_id,))
+            result = cur.fetchone()
+            return result[0] if result else None
+        except Exception as e:
+            st.error(f"Error al obtener la naturaleza de la cuenta {cuenta_id}: {e}")
+            return None
+        finally:
+            conn.close()
+    
 # Funcion para obtener el saldo de la cuenta
 def obtener_saldo(cuenta_id):
 
@@ -88,104 +103,75 @@ def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
             
             cur = conn.cursor()
 
+             # Verificar si las cuentas existen
+            if not obtener_tipo(cuenta_cargo_id) or not obtener_tipo(cuenta_abono_id):
+                st.error("Una de las cuentas no existe.")
+                return
+
             tipo_cuenta_cargo = obtener_tipo(cuenta_cargo_id)
             tipo_cuenta_abono = obtener_tipo(cuenta_abono_id)
 
-            # Verificamos si existe saldo suficiente en la cuenta que se le va a restar el monto
-            # Si se trata de la cuenta cargo este solo se restara si se trata del pasivo, patrimonio o ingresos
-            # Si se trata de la cuenta abono este solo se restara si se trata del activo o gasto
+            naturaleza_cargo = obtener_naturaleza(cuenta_cargo_id)
+            naturaleza_abono = obtener_naturaleza(cuenta_abono_id)
 
-            if tipo_cuenta_cargo == "Pasivo" or tipo_cuenta_cargo == "Patrimonio" or tipo_cuenta_cargo == "Ingresos":
+            saldo_cargo = obtener_saldo(cuenta_cargo_id)
+            saldo_abono = obtener_saldo(cuenta_abono_id)
 
-                saldo_cuenta_cargo = obtener_saldo(cuenta_cargo_id)
-
-                # si el monto es mayor que el saldo disponible accede al error
-                if monto > saldo_cuenta_cargo:
-                    st.error(f"Error! revisar la cuenta {cuenta_cargo_id}" )
-                    return
-                
-            if tipo_cuenta_abono == "Activo" or tipo_cuenta_abono == "Gastos":
+            # Verificar si hay saldo suficiente en caso de que la transacción reste valor
+            if (naturaleza_cargo == 'Acreedora' and monto > saldo_cargo) or \
+               (naturaleza_abono == 'Deudora' and monto > saldo_abono):
+                st.error("❌ Saldo insuficiente para realizar la transacción.")
+                return
             
-                saldo_cuenta_abono = obtener_saldo(cuenta_abono_id)
-          
-                # si el monto es mayor que el saldo disponible accede al error
-                if monto > saldo_cuenta_abono:
-                    st.error(f"Saldo insuficiente en la cuenta {cuenta_abono_id}")
-                    return
-            
-            # Actualizamos el saldo de la cuenta cargo
-            if tipo_cuenta_cargo == "Activo" or tipo_cuenta_cargo == "Gastos":
+            # Actualizar saldo de la cuenta cargo
+            if naturaleza_cargo == 'Deudora':
+                query = "UPDATE cuentas SET saldo = saldo + %s WHERE cuenta_id = %s"
+            else:  # Acreedora
+                query = "UPDATE cuentas SET saldo = saldo - %s WHERE cuenta_id = %s"
+            cur.execute(query, (monto, cuenta_cargo_id))
 
-                query = """
-                UPDATE cuentas 
-                SET saldo = saldo + %s 
-                WHERE cuenta_id = %s
-                """
-                cur.execute(query, (monto, cuenta_cargo_id,))
+            # Actualizar saldo de la cuenta abono
+            if naturaleza_abono == 'Deudora':
+                query = "UPDATE cuentas SET saldo = saldo - %s WHERE cuenta_id = %s"
+            else:  # Acreedora
+                query = "UPDATE cuentas SET saldo = saldo + %s WHERE cuenta_id = %s"
+            cur.execute(query, (monto, cuenta_abono_id))
 
-            else:
 
-                query = """
-                UPDATE cuentas 
-                SET saldo = saldo - %s 
-                WHERE cuenta_id = %s
-                """
-                cur.execute(query, (monto, cuenta_cargo_id,))
-
-            # Actualizacmos el saldo de la cuenta abono
-            if tipo_cuenta_abono == "Activo" or tipo_cuenta_abono == "Gastos":
-
-                query = """
-                UPDATE cuentas 
-                SET saldo = saldo - %s 
-                WHERE cuenta_id = %s
-                """
-                cur.execute(query, (monto, cuenta_abono_id,))
-
-            else:
-
-                query = """
-                UPDATE cuentas 
-                SET saldo = saldo + %s 
-                WHERE cuenta_id = %s
-                """
-                cur.execute(query, (monto, cuenta_abono_id,))
-
-            # Registramos la transacción
-            
-            query = """
-            INSERT INTO transacciones(descripcion) 
-            VALUES (%s) 
-            RETURNING transaccion_id
-            """
-            cur.execute(query, (descripcion,))
+            # Registrar transacción
+            cur.execute(
+                "INSERT INTO transacciones(descripcion) VALUES (%s) RETURNING transaccion_id",
+                (descripcion,)
+            )
             
             # Para recuperar el transaccion_id que se acaba de crear (dato de tipo serial)
             transaccion_id = cur.fetchone()[0]
+
+            # Registrar detalles (Debe - Cargo)
+            cur.execute(
+                """
+                INSERT INTO detalles_transacciones(transaccion_id, cuenta_id, tipo_asiento, monto)
+                VALUES (%s, %s, 'Debe', %s)
+                """,
+                (transaccion_id, cuenta_cargo_id, monto)
+            )
+
+            # Registrar detalles (Haber - Abono)
+            cur.execute(
+                """
+                INSERT INTO detalles_transacciones(transaccion_id, cuenta_id, tipo_asiento, monto)
+                VALUES (%s, %s, 'Haber', %s)
+                """,
+                (transaccion_id, cuenta_abono_id, monto)
+            )
+
+            # Commit final
             conn.commit()
-
-            # Registramos la cuenta cargo
-            
-            query = """
-            INSERT INTO detalles_transacciones(transaccion_id, cuenta_id, tipo_asiento, monto) 
-            VALUES (%s,%s,'Debe',%s)
-            """
-            cur.execute(query, (transaccion_id, cuenta_cargo_id, monto,))
-            conn.commit()
-
-            #Registramos la cuenta abono
-
-            query = """
-            INSERT INTO detalles_transacciones(transaccion_id, cuenta_id, tipo_asiento, monto) 
-            VALUES (%s,%s,'Haber',%s)
-            """
-            cur.execute(query, (transaccion_id, cuenta_abono_id, monto,))
-            conn.commit()
-
-            st.success(f"✅ Transacción realizada correctamente")
+            st.success(f"✅ Transacción realizada correctamente.")
  
         except Exception as e:
-            st.write(f"Error al realizar la transaccion: {e}")
+            conn.rollback()
+            st.error(f"❌ Error al realizar la transacción: {e}")
         finally:
             conn.close()
 

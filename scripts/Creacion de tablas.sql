@@ -3,7 +3,8 @@ CREATE TABLE cuentas (
 	cuenta_id INT PRIMARY KEY,
 	nombre VARCHAR(100) NOT NULL,
 	tipo VARCHAR(20) CHECK (tipo IN ('Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Gastos')) NOT NULL,
-	saldo DECIMAL (15,2) DEFAULT 0.00
+	saldo DECIMAL (15,2) DEFAULT 0.00,
+	naturaleza VARCHAR(20) CHECK (naturaleza IN ('Deudora', 'Acreedora')) NOT NULL
 );
 
 DROP TABLE IF EXISTS transacciones CASCADE;
