@@ -248,3 +248,43 @@ def get_balance_general(db_version):
             st.write(f"Error al generar el estado de situación financiera: {e}")
         finally:
             conn.close()
+
+def calcular_estado_resultados():
+    conn = connect_to_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+
+            # Ingresos: sumamos todas las cuentas de tipo 'Ingresos'
+            cur.execute("""
+                SELECT nombre, saldo 
+                FROM cuentas 
+                WHERE tipo = 'Ingresos'
+            """)
+            ingresos_rows = cur.fetchall()
+            total_ingresos = sum(row[1] for row in ingresos_rows)
+
+            # Gastos: sumamos todas las cuentas de tipo 'Gastos'
+            cur.execute("""
+                SELECT nombre, saldo 
+                FROM cuentas 
+                WHERE tipo = 'Gastos'
+            """)
+            gastos_rows = cur.fetchall()
+            total_gastos = sum(row[1] for row in gastos_rows)
+
+            utilidad_neta = total_ingresos - total_gastos
+
+            return {
+                "ingresos": ingresos_rows,
+                "gastos": gastos_rows,
+                "total_ingresos": total_ingresos,
+                "total_gastos": total_gastos,
+                "utilidad_neta": utilidad_neta
+            }
+
+        except Exception as e:
+            st.error(f"Error al calcular estado de resultados: {e}")
+        finally:
+            conn.close()
+
