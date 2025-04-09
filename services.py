@@ -1,7 +1,20 @@
 from db_connection import connect_to_db
 import streamlit as st
 import pandas as pd
+import psycopg2
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 
+# Obtener fechas automáticas
+hoy = date.today()
+primer_dia_mes_actual = hoy.replace(day=1)
+ultimo_dia_mes_anterior = primer_dia_mes_actual - relativedelta(days=1)
+primer_dia_mes_anterior = ultimo_dia_mes_anterior.replace(day=1)
+
+# Para mostrar al usuario
+fecha_fin = datetime.combine(hoy, datetime.max.time())
+fecha_inicio = datetime.combine(primer_dia_mes_actual, datetime.min.time())
+fecha_ultimo_mes = datetime.combine(ultimo_dia_mes_anterior, datetime.max.time())
 
 # Función para obtener las cuentas desde la base de datos
 def obtener_cuentas():
@@ -287,4 +300,82 @@ def calcular_estado_resultados():
             st.error(f"Error al calcular estado de resultados: {e}")
         finally:
             conn.close()
+
+def calcular_estado_capital():
+    # Función para ejecutar query
+    def obtener_dato(query, params=None):
+        with connect_to_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(query, params)
+                result = cur.fetchone()
+                return result[0] if result else 0
+
+    # Consultas
+    capital_inicial_query = """
+    SELECT COALESCE(SUM(CASE 
+        WHEN dt.tipo_asiento = 'Haber' THEN dt.monto 
+        ELSE -dt.monto END), 0)
+    FROM detalles_transacciones dt
+    JOIN transacciones t ON dt.transaccion_id = t.transaccion_id
+    WHERE dt.cuenta_id = 50 AND t.fecha <= %s;
+    """
+
+    inversiones_query = """
+    SELECT COALESCE(SUM(dt.monto), 0)
+    FROM detalles_transacciones dt
+    JOIN transacciones t ON dt.transaccion_id = t.transaccion_id
+    WHERE dt.cuenta_id = 50 AND dt.tipo_asiento = 'Haber'
+    AND t.fecha BETWEEN %s AND %s;
+    """
+
+    retiros_query = """
+    SELECT COALESCE(SUM(dt.monto), 0)
+    FROM detalles_transacciones dt
+    JOIN transacciones t ON dt.transaccion_id = t.transaccion_id
+    WHERE dt.cuenta_id = 50 AND dt.tipo_asiento = 'Debe'
+    AND t.fecha BETWEEN %s AND %s;
+    """
+
+    ingresos_query = """
+    SELECT COALESCE(SUM(CASE 
+        WHEN dt.tipo_asiento = 'Haber' THEN dt.monto 
+        ELSE -dt.monto END), 0)
+    FROM detalles_transacciones dt
+    JOIN transacciones t ON dt.transaccion_id = t.transaccion_id
+    JOIN cuentas c ON dt.cuenta_id = c.cuenta_id
+    WHERE c.tipo = 'Ingresos' AND t.fecha BETWEEN %s AND %s;
+    """
+
+    gastos_query = """
+    SELECT COALESCE(SUM(CASE 
+        WHEN dt.tipo_asiento = 'Debe' THEN dt.monto 
+        ELSE -dt.monto END), 0)
+    FROM detalles_transacciones dt
+    JOIN transacciones t ON dt.transaccion_id = t.transaccion_id
+    JOIN cuentas c ON dt.cuenta_id = c.cuenta_id
+    WHERE c.tipo = 'Gastos' AND t.fecha BETWEEN %s AND %s;
+    """
+
+    # Obtener valores
+    capital_inicial = obtener_dato(capital_inicial_query, (fecha_ultimo_mes,))
+    inversiones = obtener_dato(inversiones_query, (fecha_inicio, fecha_fin))
+    retiros = obtener_dato(retiros_query, (fecha_inicio, fecha_fin))
+    ingresos = obtener_dato(ingresos_query, (fecha_inicio, fecha_fin))
+    gastos = obtener_dato(gastos_query, (fecha_inicio, fecha_fin))
+    utilidad_neta = ingresos - gastos
+    capital_final = capital_inicial + inversiones + utilidad_neta - retiros
+
+    # Retornar todos los valores
+    return {
+        'capital_inicial': capital_inicial,
+        'inversiones': inversiones,
+        'retiros': retiros,
+        'ingresos': ingresos,
+        'gastos': gastos,
+        'utilidad_neta': utilidad_neta,
+        'capital_final': capital_final
+    }
+    
+
+
 
