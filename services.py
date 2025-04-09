@@ -117,6 +117,27 @@ def get_db_version():
     return result[0]
 
 
+def obtener_saldototal(tipo_cuenta):
+    conn = connect_to_db()
+    query = """
+    select
+        sum(saldo) 
+    from cuentas 
+    where tipo = %s
+    """
+    cur = conn.cursor()
+    cur.execute(query,(tipo_cuenta,))
+
+    saldo_total = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if saldo_total:
+        return saldo_total[0]
+    else:
+        return None
+
 # Función para realizar la transaccion entre cuentas
 def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
     conn = connect_to_db()

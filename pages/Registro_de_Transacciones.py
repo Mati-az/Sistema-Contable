@@ -10,8 +10,17 @@ cuentas = obtener_cuentas()
 lista_cuentas = [f"{cuenta[0]} - {cuenta[1]}" for cuenta in cuentas]
 
 # Crear una caja de selección para la cuenta de cargo y abono
-cuenta_cargo = st.selectbox("Cuenta de Cargo", lista_cuentas)
-cuenta_abono = st.selectbox("Cuenta de Abono", lista_cuentas)
+
+
+col1, col2, = st.columns(2)
+
+with col1:
+    cuenta_cargo = st.selectbox("Cuenta de Cargo", lista_cuentas)
+with col2:
+    cuenta_abono = st.selectbox("Cuenta de Abono", lista_cuentas)
+    
+descripcion_transaccion = st.text_area("Descripción de la transacción", "")
+monto = st.number_input("Monto de la transacción", min_value=1, step=100)
 
 # Recuperar el codigo de las cuentas
 if cuenta_cargo:
@@ -19,12 +28,6 @@ if cuenta_cargo:
 
 if cuenta_abono:
     cuenta_abono_id = int(cuenta_abono.split(' - ')[0])
-    
-# Descripción de la transacción
-descripcion_transaccion = st.text_area("Descripción de la transacción", "")
-
-# Monto de la transacción
-monto = st.number_input("Monto de la transacción", min_value=1, step=100)
 
 # Boton para la transacción
 if st.button("Realizar Transacción"):
