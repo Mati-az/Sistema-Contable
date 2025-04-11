@@ -1,6 +1,55 @@
 import streamlit as st
-from services import calcular_estado_resultados
+#from services import calcular_estado_resultados
 
+st.set_page_config(page_title="Estado de Resultados", page_icon="💵", layout="wide")
+
+st.title("💵 Estado de Resultados")
+
+st.markdown(
+    """
+    <style>
+
+        section[data-testid="stSidebar"] {
+            background-color: #dbeafe;
+        }
+
+        [data-testid="stSidebarNav"] a {
+            color: #111827 !important;
+        }
+
+        [data-testid="stSidebarNav"] a:hover,
+        [data-testid="stSidebarNav"] a:focus,
+        [data-testid="stSidebarNav"] a:active,
+        [data-testid="stSidebarNav"] a[aria-current="page"] {
+            background-color: #93c5fd !important;
+            color: #111827 !important;
+            font-weight: bold;
+            border-radius: 15px;
+            margin: 0px 20px;
+            padding: 2px 8px;
+            
+            display: flex;
+            align-items: center;
+            gap: 10px; /* espacio entre ícono y texto */
+            text-decoration: none;
+        }
+
+        [data-testid="stSidebarNav"]::before {
+            content: "🖥️ Dashboard";
+            display: block;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+'''
 resultados = calcular_estado_resultados()
 
 if resultados:
@@ -37,3 +86,4 @@ if resultados:
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(f"**Utilidad Neta**", unsafe_allow_html=True)
     st.markdown(f"<div style='text-align: right; font-weight: bold;'>S/ {utilidad_neta:,.2f}</div>", unsafe_allow_html=True)
+'''
