@@ -27,9 +27,9 @@ st.markdown(
             background-color: #93c5fd !important;
             color: #111827 !important;
             font-weight: bold;
-            border-radius: 15px;
-            margin: 0px 20px;
-            padding: 2px 8px;
+            border-radius: 10px;
+            margin: 0px 25px;
+            padding: 0px 5px;
             
             display: flex;
             align-items: center;
