@@ -101,6 +101,7 @@ tr.total {
 }
 </style>
 """, unsafe_allow_html=True)
+st.markdown(f"### {st.session_state.nombre_empresa}")
 
 mes = fecha_fin.strftime("%B").capitalize()
 anio = fecha_fin.strftime("%Y")

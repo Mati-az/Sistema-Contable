@@ -15,6 +15,7 @@ primer_dia_mes_anterior = ultimo_dia_mes_anterior.replace(day=1)
 fecha_fin = datetime.combine(hoy, datetime.max.time())
 fecha_inicio = datetime.combine(primer_dia_mes_actual, datetime.min.time())
 fecha_ultimo_mes = datetime.combine(ultimo_dia_mes_anterior, datetime.max.time())
+fecha_corte_anterior = datetime.combine(ultimo_dia_mes_anterior, datetime.max.time())
 
 # Función para obtener las cuentas desde la base de datos
 def obtener_cuentas():
@@ -419,3 +420,36 @@ def calcular_estado_capital():
         'utilidad_neta': utilidad_neta,
         'capital_final': capital_final
     }
+
+def obtener_saldos_cuentas():
+    conn = connect_to_db()  # <-- Tu función para conectar a la base de datos
+    if conn:
+        try:
+            query = """
+                SELECT 
+                    c.cuenta_id,
+                    c.nombre,
+                    c.tipo,
+                    c.naturaleza,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Debe' THEN dt.monto
+                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Haber' THEN -dt.monto
+                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Haber' THEN dt.monto
+                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Debe' THEN -dt.monto
+                            ELSE 0
+                        END
+                    ), 0) AS saldo
+                FROM cuentas c
+                LEFT JOIN detalles_transacciones dt ON c.cuenta_id = dt.cuenta_id
+                GROUP BY c.cuenta_id, c.nombre, c.tipo, c.naturaleza
+                ORDER BY c.cuenta_id;
+            """
+            
+            df = pd.read_sql(query, conn)
+            return df  # Devuelve un DataFrame con los saldos de las cuentas
+        except Exception as e:
+            print(f"Error al obtener los saldos de las cuentas: {e}")
+            return None
+        finally:
+            conn.close()

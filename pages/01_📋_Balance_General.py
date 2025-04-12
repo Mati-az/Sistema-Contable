@@ -49,6 +49,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(f"### {st.session_state.nombre_empresa}")
+
 # Primero obtén un pequeño valor que cambie cuando cambia la base de datos
 db_version = get_db_version()
 

@@ -53,7 +53,7 @@ st.markdown(
 resultados = calcular_estado_resultados()
 
 if resultados:
-    st.markdown("### SMART TOUCH LEARNING")
+    st.markdown(f"### {st.session_state.nombre_empresa}")
     st.markdown("#### Estado de resultados")
     st.markdown("##### Mes terminado el 30 de abril de 2010")
     st.write("---")

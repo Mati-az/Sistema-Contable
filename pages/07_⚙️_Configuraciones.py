@@ -46,3 +46,25 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# Página de configuración
+st.title("Configuración de la Empresa")
+
+# Crear un valor por defecto si no existe
+if "nombre_empresa" not in st.session_state:
+    st.session_state.nombre_empresa = "Mi Empresa S.A.C."
+
+# Input para cambiar el nombre
+nuevo_nombre = st.text_input(
+    "Nombre de la empresa",
+    value=st.session_state.nombre_empresa,
+    help="Ingresa el nombre que deseas mostrar en los reportes."
+)
+
+# Botón para guardar
+if st.button("Guardar cambios"):
+    st.session_state.nombre_empresa = nuevo_nombre
+    st.success("¡Nombre de empresa actualizado!")
+
+# Mostrar el nombre actual
+st.write("**Nombre actual:**", st.session_state.nombre_empresa)
