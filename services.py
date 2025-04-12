@@ -23,8 +23,6 @@ def obtener_cuentas():
     if conn:
         try:
             cur = conn.cursor()
-            # Consulta SQL para obtener todas las cuentas
-
             query = """
             SELECT 
                 cuenta_id, 
@@ -117,7 +115,7 @@ def get_db_version():
     return result[0]
 
 
-def obtener_saldo_total(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
+def obtener_saldo_tipo(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
     
     if fecha_fin is None:
         fecha_fin = (date.today() + timedelta(days=1)).isoformat()
@@ -152,9 +150,9 @@ def obtener_saldo_total(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
     else:
         return 0
 
-def obtener_variación_hasta_ayer(tipo_cuenta, total):
+def obtener_variación(tipo_cuenta, total):
 
-    saldo_hasta_dia_anterior = float(obtener_saldo_total(tipo_cuenta,fecha_fin=hoy.isoformat()))
+    saldo_hasta_dia_anterior = float(obtener_saldo_tipo(tipo_cuenta,fecha_fin=hoy.isoformat()))
 
     if saldo_hasta_dia_anterior != 0:
         variacion = (total-saldo_hasta_dia_anterior)/saldo_hasta_dia_anterior
