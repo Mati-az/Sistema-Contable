@@ -76,6 +76,7 @@ col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,2,1,2,1,2,1,2])
 with col1:
     st.image("imagenes/activos.png", width=110)
 
+
 with col2:
     total_activo = float(obtener_saldo_tipo("Activo"))
     var_activo = float(obtener_variación("Activo",total_activo))
