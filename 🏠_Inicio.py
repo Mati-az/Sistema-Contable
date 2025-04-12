@@ -111,5 +111,4 @@ with col8:
     st.metric(label="GASTOS TOTALES", value=total_gastos, delta=f"{var_gastos:.2f}%", help = None)
 
 
-
-#Para correr la aplicación poner en el terminal: streamlit run app.py
+#Para correr la aplicación poner en el terminal: "streamlit run 🏠_Inicio.py"
