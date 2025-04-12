@@ -1,5 +1,5 @@
 import streamlit as st
-#from services import calcular_estado_resultados
+from services import calcular_estado_resultados
 
 st.set_page_config(page_title="Estado de Resultados", page_icon="💵", layout="wide")
 
@@ -49,7 +49,7 @@ st.markdown(
 )
 
 
-'''
+
 resultados = calcular_estado_resultados()
 
 if resultados:
@@ -86,4 +86,3 @@ if resultados:
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(f"**Utilidad Neta**", unsafe_allow_html=True)
     st.markdown(f"<div style='text-align: right; font-weight: bold;'>S/ {utilidad_neta:,.2f}</div>", unsafe_allow_html=True)
-'''

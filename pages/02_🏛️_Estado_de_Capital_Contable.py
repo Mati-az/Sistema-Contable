@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-#from services import calcular_estado
+from services import calcular_estado_capital
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
@@ -65,16 +65,16 @@ fecha_ultimo_mes = datetime.combine(ultimo_dia_mes_anterior, datetime.max.time()
 
 
 # Llamada a la función y asignación del diccionario a una variable
-# resultados = calcular_estado_capital()
+resultados = calcular_estado_capital()
 
 # Asignación de valores del diccionario a variables separadas
-#capital_inicial = resultados['capital_inicial']
-#inversiones = resultados['inversiones']
-#retiros = resultados['retiros']
-#ingresos = resultados['ingresos']
-#gastos = resultados['gastos']
-#utilidad_neta = resultados['utilidad_neta']
-#capital_final = resultados['capital_final']
+capital_inicial = resultados['capital_inicial']
+inversiones = resultados['inversiones']
+retiros = resultados['retiros']
+ingresos = resultados['ingresos']
+gastos = resultados['gastos']
+utilidad_neta = resultados['utilidad_neta']
+capital_final = resultados['capital_final']
 
 # Mostrar en Streamlit
 st.markdown("""

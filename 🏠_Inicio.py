@@ -1,7 +1,6 @@
 import streamlit as st
 from services import obtener_saldo_total, obtener_variación_hasta_ayer
 import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
 from datetime import date, timedelta
 
