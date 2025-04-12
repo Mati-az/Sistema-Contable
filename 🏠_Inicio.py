@@ -111,42 +111,5 @@ with col8:
     st.metric(label="GASTOS TOTALES", value=total_gastos, delta=f"{var_gastos:.2f}%", help = None)
 
 
-# Simulando lo que viene de SQL (para ver como queda)
-data = {
-    "Mes": ["2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01", "2025-02", "2025-03", "2025-04"],
-    "Activos Totales": [50000, 55000, 60000, 61000, 70000, 90000, 120000, 130000, 125000, 140000],
-    "Pasivos Totales": [30000, 31000, 25000, 35000, 45000, 48000, 50000, 55000, 52000, 60000]
-}
-
-df = pd.DataFrame(data)
-
-fig = go.Figure()
-
-fig.add_trace(go.Bar(
-    x=df["Mes"],
-    y=df["Activos Totales"],
-    name="Activos Totales",
-    marker_color="#3b82f6"  # azul
-))
-
-fig.add_trace(go.Bar(
-    x=df["Mes"],
-    y=df["Pasivos Totales"],
-    name="Pasivos Totales",
-    marker_color="#22d3ee"  # celeste
-))
-
-# Estilo de layout
-fig.update_layout(
-    title="Balance General",
-    xaxis_title="Mes",
-    yaxis_title="Monto (S/.)",
-    barmode='group',
-    template="simple_white",
-    legend=dict(x=0.8, y=1.3),
-    height=400
-)
-
-st.plotly_chart(fig, use_container_width=True)
 
 #Para correr la aplicación poner en el terminal: streamlit run app.py

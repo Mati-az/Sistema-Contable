@@ -154,16 +154,13 @@ def obtener_saldo_total(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
 
 def obtener_variación_hasta_ayer(tipo_cuenta, total):
 
-    ayer = (date.today() - timedelta(days=1)).isoformat()
-
-    saldo_hasta_dia_anterior = float(obtener_saldo_total(tipo_cuenta,fecha_fin=ayer))
+    saldo_hasta_dia_anterior = float(obtener_saldo_total(tipo_cuenta,fecha_fin=hoy.isoformat()))
 
     if saldo_hasta_dia_anterior != 0:
         variacion = (total-saldo_hasta_dia_anterior)/saldo_hasta_dia_anterior
         return variacion
     else:
         return 0
-
 
 # Función para realizar la transaccion entre cuentas
 def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
