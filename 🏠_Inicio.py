@@ -4,6 +4,9 @@ import pandas as pd
 import streamlit as st
 from datetime import date, timedelta
 
+if "nombre_empresa" not in st.session_state:
+    st.session_state.nombre_empresa = "Mi Empresa S.A.C."
+
 st.set_page_config(page_title="Sistema Contable", page_icon="📊", layout="wide")
 
 st.title("📊 Bienvenido al Sistema Contable")

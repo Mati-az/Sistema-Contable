@@ -3,6 +3,11 @@ import pandas as pd
 from services import calcular_estado_capital
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+import locale
+from datetime import datetime
+
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')  # o 'Spanish_Spain.1252' en Windows
+info_fecha = datetime.now().strftime("Mes terminado el %d de %B del %Y")
 
 st.set_page_config(page_title="Estado de Resultados", page_icon="🏛️", layout="wide")
 
@@ -105,7 +110,7 @@ st.markdown(f"### {st.session_state.nombre_empresa}")
 
 mes = fecha_fin.strftime("%B").capitalize()
 anio = fecha_fin.strftime("%Y")
-st.subheader(f"Mes terminado el {fecha_fin.strftime('%d de %B de %Y')}")
+st.subheader(f"Mes terminado el {info_fecha}")
 
 st.write(f"**Capital, 1 de {mes} de {anio}:** ${capital_inicial:,.2f}")
 st.write(f"**Más: Inversiones realizadas por el propietario:** ${inversiones:,.2f}")
