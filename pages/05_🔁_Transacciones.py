@@ -72,7 +72,7 @@ col1, col2, col3 = st.columns([2,1,2])
 with col1:
     cuenta_cargo = st.selectbox("Cuenta de Cargo", lista_cuentas, help="La cuenta que será **debitada** en la transacción.")
 with col2:
-    monto = st.number_input("Monto de la transacción", min_value=1, step=100)    
+    monto = st.number_input("Monto de la transacción", min_value=1.0, step=0.01)    
 with col3:
     cuenta_abono = st.selectbox("Cuenta de Abono", lista_cuentas, help="La cuenta que será **acreditada** en la transacción.")
 
@@ -133,9 +133,10 @@ ORDER BY t.fecha DESC
 """
 conn = connect_to_db()
 df = pd.read_sql(query, conn, params=(fecha_ini, fecha_fin))
-df["Monto (S/.)"] = df["Monto (S/.)"].apply(lambda x: f"S/. {x:,.2f}" if pd.notnull(x) else "")
+df["Monto (S/.)"] = pd.to_numeric(df["Monto (S/.)"], errors='coerce')
+#df["Monto (S/.)"] = df["Monto (S/.)"].apply(lambda x: f"S/. {x:,.2f}" if pd.notnull(x) else "")
 df = df.reset_index(drop=True)
 
 if st.button("Ver Historial"):
     st.markdown("### 📄 Transacciones registradas")
-    st.dataframe(df, use_container_width=True)    
+    st.dataframe(df, hide_index=True)    

@@ -173,9 +173,6 @@ def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
                 st.error("Una de las cuentas no existe.")
                 return
 
-            tipo_cuenta_cargo = obtener_tipo(cuenta_cargo_id)
-            tipo_cuenta_abono = obtener_tipo(cuenta_abono_id)
-
             naturaleza_cargo = obtener_naturaleza(cuenta_cargo_id)
             naturaleza_abono = obtener_naturaleza(cuenta_abono_id)
 
