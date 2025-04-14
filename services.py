@@ -413,40 +413,7 @@ def calcular_estado_capital():
         'capital_final': capital_final
     }
 
-def obtener_saldos_cuentas():
-    conn = connect_to_db()
-    if conn:
-        try:
-            query = """
-                SELECT 
-                    c.cuenta_id,
-                    c.nombre,
-                    c.tipo,
-                    c.naturaleza,
-                    COALESCE(SUM(
-                        CASE 
-                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Debe' THEN dt.monto
-                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Haber' THEN -dt.monto
-                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Haber' THEN dt.monto
-                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Debe' THEN -dt.monto
-                            ELSE 0
-                        END
-                    ), 0) AS saldo
-                FROM cuentas c
-                LEFT JOIN detalles_transacciones dt ON c.cuenta_id = dt.cuenta_id
-                GROUP BY c.cuenta_id, c.nombre, c.tipo, c.naturaleza
-                ORDER BY c.cuenta_id;
-            """
-            
-            df = pd.read_sql(query, conn)
-            return df
-        except Exception as e:
-            print(f"Error al obtener los saldos de las cuentas: {e}")
-            return None
-        finally:
-            conn.close()
-
-def obtener(tipo_cuenta):
+def obtener_saldo_cuenta(tipo_cuenta):
     conn = connect_to_db()
     if conn:
         try:

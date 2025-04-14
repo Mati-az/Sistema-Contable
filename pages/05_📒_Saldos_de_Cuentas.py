@@ -1,5 +1,5 @@
 import streamlit as st
-from services import obtener_saldos_cuentas, obtener
+from services import obtener_saldo_cuenta
 import pandas as pd
 
 st.set_page_config(page_title="Saldos de Cuentas", page_icon="📒", layout="wide")
@@ -49,11 +49,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-activos_df = obtener('Activo')
-pasivos_df = obtener('Pasivo')
-patrimonio_df = obtener('Patrimonio')
-ingresos_df = obtener('Ingresos')
-gastos_df = obtener('Gastos')
+activos_df = obtener_saldo_cuenta('Activo')
+pasivos_df = obtener_saldo_cuenta('Pasivo')
+patrimonio_df = obtener_saldo_cuenta('Patrimonio')
+ingresos_df = obtener_saldo_cuenta('Ingresos')
+gastos_df = obtener_saldo_cuenta('Gastos')
 
 if not activos_df.empty:
 
