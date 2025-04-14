@@ -48,7 +48,7 @@ st.markdown(
             font-weight: bold;
             border-radius: 10px;
             margin: 0px 25px;
-            padding: 0px 5px;
+            padding: 2px 5px;
             
             display: flex;
             align-items: center;

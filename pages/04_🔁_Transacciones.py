@@ -16,7 +16,7 @@ st.write("""
 """)
 
 st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
-st.write("### 📒 **Registro de Transacciones**")
+st.subheader("📒 Registro de Transacciones")
 
 st.markdown(
     """
@@ -39,7 +39,7 @@ st.markdown(
             font-weight: bold;
             border-radius: 10px;
             margin: 0px 25px;
-            padding: 0px 5px;
+            padding: 2px 5px;
             
             display: flex;
             align-items: center;
@@ -61,12 +61,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Obtener las cuentas de la base de datos
 cuentas = obtener_cuentas()
-
 lista_cuentas = [f"{cuenta[0]} - {cuenta[1]}" for cuenta in cuentas]
 
-# Crear una caja de selección para la cuenta de cargo y abono
 col1, col2, col3 = st.columns([2,1,2])
 
 with col1:
@@ -78,7 +75,6 @@ with col3:
 
 descripcion_transaccion = st.text_area("Descripción de la transacción")
     
-# Recuperar el codigo de las cuentas
 if cuenta_cargo:
     cuenta_cargo_id = int(cuenta_cargo.split(' - ')[0])
 
@@ -94,13 +90,11 @@ if st.button("Realizar Transacción"):
     else:
         st.warning("⚠️ Transacción invalida: Ingrese dos cuentas diferentes")
 
+
 st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+st.subheader("📜 Historial de Transacciones")
 
-st.write("### 📜 **Historial de Transacciones**")
-
-# Opciones de filtro de tiempo
-filtro = st.selectbox("📅 Ver transacciones de:", 
-                    ["Hoy", "Últimos 7 días", "Últimos 30 días", "Personalizado"])
+filtro = st.selectbox("📅 Ver transacciones de:", ["Hoy", "Últimos 7 días", "Últimos 30 días", "Personalizado"])
 
 # Calcular el rango de fechas según opción
 fecha_fin = datetime.today()
@@ -111,7 +105,6 @@ elif filtro == "Últimos 7 días":
 elif filtro == "Últimos 30 días":
     fecha_ini = fecha_fin - timedelta(days=30)
 else:
-# Rango personalizado con date_input
     c1, c2 = st.columns(2)
     with c1:
         fecha_ini = st.date_input("Desde", value=fecha_fin - timedelta(days=7))
@@ -133,8 +126,6 @@ ORDER BY t.fecha DESC
 """
 conn = connect_to_db()
 df = pd.read_sql(query, conn, params=(fecha_ini, fecha_fin))
-df["Monto (S/.)"] = pd.to_numeric(df["Monto (S/.)"], errors='coerce')
-#df["Monto (S/.)"] = df["Monto (S/.)"].apply(lambda x: f"S/. {x:,.2f}" if pd.notnull(x) else "")
 df = df.reset_index(drop=True)
 
 if st.button("Ver Historial"):

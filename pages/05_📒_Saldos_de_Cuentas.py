@@ -1,7 +1,8 @@
 import streamlit as st
-from services import obtener_saldos_cuentas
+from services import obtener_saldos_cuentas, obtener
+import pandas as pd
 
-st.set_page_config(page_title="Saldos de Cuentas", layout="wide")
+st.set_page_config(page_title="Saldos de Cuentas", page_icon="📒", layout="wide")
 
 st.title("📒 Saldos de las Cuentas")
 
@@ -26,7 +27,7 @@ st.markdown(
             font-weight: bold;
             border-radius: 10px;
             margin: 0px 25px;
-            padding: 0px 5px;
+            padding: 2px 5px;
             
             display: flex;
             align-items: center;
@@ -48,42 +49,90 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Obtener datos
-saldos_df = obtener_saldos_cuentas()
+activos_df = obtener('Activo')
+pasivos_df = obtener('Pasivo')
+patrimonio_df = obtener('Patrimonio')
+ingresos_df = obtener('Ingresos')
+gastos_df = obtener('Gastos')
 
-if saldos_df.empty:
-    st.warning("No se encontraron datos.")
-else:
-    # Mostrar en 3 columnas
-    col1, col2, col3 = st.columns(3)
+if not activos_df.empty:
 
-    for idx, row in saldos_df.iterrows():
-        cuenta_id = row['cuenta_id']
-        nombre = row['nombre']
-        tipo = row['tipo']
-        naturaleza = row['naturaleza']
-        saldo = row['saldo']
+    st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+    st.subheader("🟢 Activos")
+    cols = st.columns(3)
 
-        if idx % 3 == 0:
-            container = col1
-        elif idx % 3 == 1:
-            container = col2
-        else:
-            container = col3
+    for i, row in activos_df.iterrows():
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <h3 style="color: #4CAF50; text-align: center;">Cuenta {row['cuenta_id']}</h3>
+                    <p><strong>Nombre:</strong> {row['nombre']}</p>
+                    <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
-        with container:
-            if saldo == 0:
-                saldo_texto = "<span style='color:gray;'>-</span>"
-            elif saldo > 0:
-                saldo_texto = f"<span style='color:green;'>S/ {saldo:,.2f}</span>"
-            else:
-                saldo_texto = f"<span style='color:red;'>S/ {saldo:,.2f}</span>"
+if not pasivos_df.empty:
+    st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+    st.subheader("🔴 Pasivos")      
+    cols = st.columns(3)
 
-            label = f"**{cuenta_id} {nombre} ({naturaleza})**"
+    for i, row in pasivos_df.iterrows():
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #FF5733; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <h3 style="color: #FF5733; text-align: center;">Cuenta {row['cuenta_id']}</h3>
+                    <p><strong>Nombre:</strong> {row['nombre']}</p>
+                    <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.markdown(f"""
-                {label}<br>
-                {saldo_texto}
-            """, unsafe_allow_html=True)
+if not patrimonio_df.empty:
+    st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+    st.subheader("🟣 Patriminio")
+    cols = st.columns(3)
 
+    for i, row in patrimonio_df.iterrows():
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #9B59B6; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <h3 style="color: #9B59B6; text-align: center;">Cuenta {row['cuenta_id']}</h3>
+                    <p><strong>Nombre:</strong> {row['nombre']}</p>
+                    <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+if not ingresos_df.empty:
+    st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+    st.subheader("🟡 Ingresos")
+    cols = st.columns(3)
+
+    for i, row in ingresos_df.iterrows():
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #F1C40F; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <h3 style="color: #F1C40F; text-align: center;">Cuenta {row['cuenta_id']}</h3>
+                    <p><strong>Nombre:</strong> {row['nombre']}</p>
+                    <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+if not gastos_df.empty:
+    st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
+    st.subheader("🔵 Gastos")
+    cols = st.columns(3)
+
+    for i, row in gastos_df.iterrows():
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #3498DB; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <h3 style="color: #3498DB; text-align: center;">Cuenta {row['cuenta_id']}</h3>
+                    <p><strong>Nombre:</strong> {row['nombre']}</p>
+                    <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
+                </div>
+                """, unsafe_allow_html=True)
 

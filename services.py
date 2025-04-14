@@ -19,32 +19,28 @@ fecha_corte_anterior = datetime.combine(ultimo_dia_mes_anterior, datetime.max.ti
 
 # Función para obtener las cuentas desde la base de datos
 def obtener_cuentas():
+    
     conn = connect_to_db()
+    cur = conn.cursor()
+
     cuentas = []
-    if conn:
-        try:
-            cur = conn.cursor()
-            query = """
-            SELECT 
-                cuenta_id, 
-                nombre 
-            FROM cuentas 
-            ORDER BY 1
-            """
-            cur.execute(query)
-            
-            cuentas = cur.fetchall()  # Recuperamos todas las filas con el fetchall, una lista de tuplas
-            cur.close()
-        
-        except Exception as e:
-            st.write(f"Error al obtener las cuentas: {e}")
-        
-        finally:
-            conn.close()
+
+    query = """
+    SELECT 
+        cuenta_id, 
+        nombre 
+    FROM cuentas 
+    ORDER BY 1
+    """
+    cur.execute(query)
+    cuentas = cur.fetchall()  # Recuperamos todas las filas con el fetchall, una lista de tuplas
+    
+    cur.close()
+    conn.close()
     return cuentas
 
 # Funcion para obtener el tipo de cuenta
-def obtener_tipo(cuenta_id):
+def obtener_tipo_cuenta(cuenta_id):
     
     conn = connect_to_db()
     cur = conn.cursor()
@@ -67,7 +63,7 @@ def obtener_tipo(cuenta_id):
     else:
         return None
     
-def obtener_naturaleza(cuenta_id):
+def obtener_naturaleza_cuenta(cuenta_id):
     conn = connect_to_db()
     if conn:
         try:
@@ -95,7 +91,6 @@ def obtener_saldo(cuenta_id):
     WHERE cuenta_id = %s    
     """
     cur.execute(query,(cuenta_id,))
-    
     saldo_cuenta = cur.fetchone()
 
     cur.close()
@@ -170,12 +165,12 @@ def transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion):
             cur = conn.cursor()
 
              # Verificar si las cuentas existen
-            if not obtener_tipo(cuenta_cargo_id) or not obtener_tipo(cuenta_abono_id):
+            if not obtener_tipo_cuenta(cuenta_cargo_id) or not obtener_tipo_cuenta(cuenta_abono_id):
                 st.error("Una de las cuentas no existe.")
                 return
 
-            naturaleza_cargo = obtener_naturaleza(cuenta_cargo_id)
-            naturaleza_abono = obtener_naturaleza(cuenta_abono_id)
+            naturaleza_cargo = obtener_naturaleza_cuenta(cuenta_cargo_id)
+            naturaleza_abono = obtener_naturaleza_cuenta(cuenta_abono_id)
 
             saldo_cargo = obtener_saldo(cuenta_cargo_id)
             saldo_abono = obtener_saldo(cuenta_abono_id)
@@ -419,7 +414,7 @@ def calcular_estado_capital():
     }
 
 def obtener_saldos_cuentas():
-    conn = connect_to_db()  # <-- Tu función para conectar a la base de datos
+    conn = connect_to_db()
     if conn:
         try:
             query = """
@@ -444,7 +439,43 @@ def obtener_saldos_cuentas():
             """
             
             df = pd.read_sql(query, conn)
-            return df  # Devuelve un DataFrame con los saldos de las cuentas
+            return df
+        except Exception as e:
+            print(f"Error al obtener los saldos de las cuentas: {e}")
+            return None
+        finally:
+            conn.close()
+
+def obtener(tipo_cuenta):
+    conn = connect_to_db()
+    if conn:
+        try:
+            query = """
+                SELECT 
+                    c.cuenta_id,
+                    c.nombre,
+                    c.tipo,
+                    c.naturaleza,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Debe' THEN dt.monto
+                            WHEN c.naturaleza = 'Deudora' AND dt.tipo_asiento = 'Haber' THEN -dt.monto
+                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Haber' THEN dt.monto
+                            WHEN c.naturaleza = 'Acreedora' AND dt.tipo_asiento = 'Debe' THEN -dt.monto
+                            ELSE 0
+                        END
+                    ), 0) AS saldo
+                FROM cuentas c
+                LEFT JOIN detalles_transacciones dt ON c.cuenta_id = dt.cuenta_id
+                WHERE c.tipo = %s
+                GROUP BY c.cuenta_id, c.nombre, c.tipo, c.naturaleza
+                HAVING saldo != 0
+                ORDER BY c.cuenta_id;
+            """
+            
+            df = pd.read_sql(query, conn, params=(tipo_cuenta,))
+            df = df.reset_index(drop=True)
+            return df
         except Exception as e:
             print(f"Error al obtener los saldos de las cuentas: {e}")
             return None
