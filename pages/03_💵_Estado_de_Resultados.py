@@ -1,9 +1,15 @@
 import streamlit as st
 from services import calcular_estado_resultados
+import locale
+from datetime import datetime
+
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')  # o 'Spanish_Spain.1252' en Windows
+info_fecha = datetime.now().strftime("Mes terminado el %d de %B del %Y")
 
 st.set_page_config(page_title="Estado de Resultados", page_icon="💵", layout="wide")
 
 st.title("💵 Estado de Resultados")
+
 
 st.markdown(
     """
@@ -53,9 +59,8 @@ st.markdown(
 resultados = calcular_estado_resultados()
 
 if resultados:
-    st.markdown("### SMART TOUCH LEARNING")
-    st.markdown("#### Estado de resultados")
-    st.markdown("##### Mes terminado el 30 de abril de 2010")
+    st.markdown(f"### {st.session_state.nombre_empresa}")
+    st.subheader(f"Mes terminado el {info_fecha}")
     st.write("---")
 
     # Ingresos

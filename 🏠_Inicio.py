@@ -4,6 +4,9 @@ import pandas as pd
 import streamlit as st
 from datetime import date, timedelta
 
+if "nombre_empresa" not in st.session_state:
+    st.session_state.nombre_empresa = "Mi Empresa S.A.C."
+
 st.set_page_config(page_title="Sistema Contable", page_icon="📊", layout="wide")
 
 st.title("📊 Bienvenido al Sistema Contable")
@@ -75,6 +78,7 @@ col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,2,1,2,1,2,1,2])
 
 with col1:
     st.image("imagenes/activos.png", width=110)
+
 
 with col2:
     total_activo = float(obtener_saldo_tipo("Activo"))

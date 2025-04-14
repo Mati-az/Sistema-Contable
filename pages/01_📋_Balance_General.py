@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 from services import get_balance_general, get_db_version
+import locale
+from datetime import datetime
+
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')  # o 'Spanish_Spain.1252' en Windows
+info_fecha = datetime.now().strftime("Mes terminado el %d de %B del %Y")
 
 st.set_page_config(page_title="Balance General", page_icon="📋", layout="wide")
 
@@ -48,6 +53,9 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+st.markdown(f"### {st.session_state.nombre_empresa}")
+st.markdown(f"##### {info_fecha}")
 
 # Primero obtén un pequeño valor que cambie cuando cambia la base de datos
 db_version = get_db_version()

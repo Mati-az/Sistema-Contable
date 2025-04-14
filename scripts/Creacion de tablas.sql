@@ -23,4 +23,4 @@ CREATE TABLE detalles_transacciones (
 	monto DECIMAL(15,2) NOT NULL,
 	FOREIGN KEY (transaccion_id) REFERENCES transacciones (transaccion_id) ON DELETE CASCADE,
 	FOREIGN KEY (cuenta_id) REFERENCES cuentas (cuenta_id) ON DELETE CASCADE
-);
+)
