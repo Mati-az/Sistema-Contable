@@ -7,12 +7,13 @@ from db_connection import connect_to_db
 st.set_page_config(page_title="Registro de Transacciones", page_icon="🔁", layout="wide")
 
 st.title("🔁 Transacciones")
-st.write("""
-    💬 Aquí puedes **registrar nuevas operaciones contables** y consultar el **historial** de movimientos financieros de tu empresa.
-    
-    🔄 Cada transacción incluye la cuenta de cargo, la cuenta de abono, el monto y una descripción detallada.
-    
-    📊 Usa esta sección para mantener el control preciso y organizado de tu contabilidad diaria.
+
+st.markdown("""
+💼 **Gestiona tus transacciones de manera sencilla**.
+
+Realiza movimientos entre cuentas contables, ya sea un cargo o abono, con solo unos clics. 
+
+Además, consulta el **Historial de Transacciones** filtrado por fecha para mantener un registro detallado de todas tus operaciones. 📅
 """)
 
 st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)

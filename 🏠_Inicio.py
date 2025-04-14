@@ -10,22 +10,21 @@ if "nombre_empresa" not in st.session_state:
 st.set_page_config(page_title="Sistema Contable", page_icon="📊", layout="wide")
 
 st.title("📊 Bienvenido al Sistema Contable")
-st.write("""
-👋 **¡Bienvenido al Sistema Contable!**  
 
-Este sistema ha sido diseñado para brindarte una **gestión financiera eficiente, ordenada y visual**.  
-Aquí podrás:
+st.markdown("""
+**Bienvenido al sistema contable**, una herramienta integral para gestionar y monitorear tus finanzas. 💼
 
-✅ **Registrar transacciones** contables de forma rápida y segura.  
-📊 **Consultar balances** actualizados por periodo: activos, pasivos, ingresos y gastos.  
-📂 **Visualizar reportes** interactivos para tomar decisiones informadas.  
-⚙️ **Configurar tus cuentas** y personalizar la operación según tu necesidad.
+✅ Accede a información detallada sobre tu **Balance General**  
+✅ Revisa tu **Estado de Capital Contable**  
+✅ Consulta el **Estado de Resultados**  
+✅ Realiza **Transacciones** de forma sencilla  
+✅ Visualiza los **Saldos de Cuentas**  
+✅ Ajusta las **Configuraciones** según tus necesidades
 
-Todo lo que necesitas para tener el **control total de tu contabilidad**, en una sola plataforma.
+¡Mantén todo tu control financiero en un solo lugar! 📈
 """)
 
 st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
-
 
 st.markdown(
     """
@@ -70,10 +69,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown("### 🧮 Resumen Financiero Mensual")
-st.write("Visualiza el total de activos, pasivos, ingresos y gastos junto con su variación porcentual respecto al total hasta el dia anterior.")
-st.write("")
+st.markdown("### 🧮 Resumen Financiero Diario")
 
+st.markdown("""
+**Revisa el total de tus activos, pasivos, ingresos y gastos**, junto con su variación porcentual respecto al total hasta el día anterior. 
+
+🔍 Mantente al tanto de las fluctuaciones diarias y toma decisiones informadas para mejorar el control financiero.
+            
+
+""")
+st.write("")
+         
 col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,2,1,2,1,2,1,2])
 
 with col1:
