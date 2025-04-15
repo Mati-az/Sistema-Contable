@@ -1,3 +1,6 @@
+-- IMPORTANTE: Tiene que crear una base de datos llamada "Sistema Contable" en PostgreSQL antes de ejecutar este script.
+-- Este script crea las tablas necesarias para el sistema contable.
+
 DROP TABLE IF EXISTS cuentas CASCADE;
 CREATE TABLE cuentas (
 	cuenta_id INT PRIMARY KEY,
