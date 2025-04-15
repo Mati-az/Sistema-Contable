@@ -1,6 +1,5 @@
 import streamlit as st
 from services import obtener_saldo_tipo, obtener_variación
-import streamlit as st
 
 if "nombre_empresa" not in st.session_state:
     st.session_state.nombre_empresa = "Mi Empresa S.A.C."
@@ -94,7 +93,6 @@ with col3:
 with col4:
     total_pasivo = float(obtener_saldo_tipo("Pasivo"))
     var_pasivo = float(obtener_variación("Pasivo",total_pasivo))
-
     st.metric(label="PASIVOS TOTALES", value=total_pasivo, delta=f"{var_pasivo:.2f}%", help = None)
 
 with col5:
@@ -113,5 +111,4 @@ with col8:
     var_gastos = float(obtener_variación("Gastos",total_gastos))
     st.metric(label="GASTOS TOTALES", value=total_gastos, delta=f"{var_gastos:.2f}%", help = None)
 
-
-#Para correr la aplicación ubicarse en el archivo 🏠_Inicio.py, abrir el terminal y escribir: "streamlit run 🏠_Inicio.py"
+#Para correr la aplicación abrir el terminal y escribir: "streamlit run 🏠_Inicio.py"
