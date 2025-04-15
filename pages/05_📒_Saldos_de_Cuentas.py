@@ -84,7 +84,7 @@ else:
             with cols[i % 3]:
                 st.markdown(
                     f"""
-                    <div style="border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <div style="border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 180px;">
                         <h3 style="color: #4CAF50; text-align: center;">Cuenta {row['cuenta_id']}</h3>
                         <p><strong>Nombre:</strong> {row['nombre']}</p>
                         <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
@@ -100,7 +100,7 @@ else:
             with cols[i % 3]:
                 st.markdown(
                     f"""
-                    <div style="border: 2px solid #FF5733; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <div style="border: 2px solid #FF5733; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 180px;">
                         <h3 style="color: #FF5733; text-align: center;">Cuenta {row['cuenta_id']}</h3>
                         <p><strong>Nombre:</strong> {row['nombre']}</p>
                         <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
@@ -116,7 +116,7 @@ else:
             with cols[i % 3]:
                 st.markdown(
                     f"""
-                    <div style="border: 2px solid #9B59B6; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <div style="border: 2px solid #9B59B6; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 180px;">
                         <h3 style="color: #9B59B6; text-align: center;">Cuenta {row['cuenta_id']}</h3>
                         <p><strong>Nombre:</strong> {row['nombre']}</p>
                         <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
@@ -132,7 +132,7 @@ else:
             with cols[i % 3]:
                 st.markdown(
                     f"""
-                    <div style="border: 2px solid #F1C40F; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <div style="border: 2px solid #F1C40F; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 180px;">
                         <h3 style="color: #F1C40F; text-align: center;">Cuenta {row['cuenta_id']}</h3>
                         <p><strong>Nombre:</strong> {row['nombre']}</p>
                         <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
@@ -148,7 +148,7 @@ else:
             with cols[i % 3]:
                 st.markdown(
                     f"""
-                    <div style="border: 2px solid #3498DB; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 160px;">
+                    <div style="border: 2px solid #3498DB; border-radius: 10px; padding: 15px; margin: 10px; background-color: #f9f9f9; width: 400px; height: 180px;">
                         <h3 style="color: #3498DB; text-align: center;">Cuenta {row['cuenta_id']}</h3>
                         <p><strong>Nombre:</strong> {row['nombre']}</p>
                         <p><strong>Saldo:</strong> S/. {row['saldo']:,.2f}</p>
