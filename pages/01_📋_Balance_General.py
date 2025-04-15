@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from services import get_balance_general, get_db_version
 import locale
 from datetime import datetime

@@ -12,7 +12,6 @@ st.markdown("""
 Accede a la información actualizada de cada cuenta, incluyendo su nombre y saldo disponible. Mantén un control total de tu situación financiera con esta herramienta visual. 📊
 """)
 
-
 st.markdown(
     """
     <style>
@@ -56,12 +55,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Obtener datos de las cuentas con un saldo diferente de cero
 activos_df = obtener_saldo_cuenta('Activo')
 pasivos_df = obtener_saldo_cuenta('Pasivo')
 patrimonio_df = obtener_saldo_cuenta('Patrimonio')
 ingresos_df = obtener_saldo_cuenta('Ingresos')
 gastos_df = obtener_saldo_cuenta('Gastos')
 
+# Mostrar mensaje si no hay saldos disponibles
 if activos_df.empty and pasivos_df.empty and patrimonio_df.empty and ingresos_df.empty and gastos_df.empty:
     st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
     st.markdown("""
@@ -74,6 +75,9 @@ if activos_df.empty and pasivos_df.empty and patrimonio_df.empty and ingresos_df
     """, unsafe_allow_html=True)
     st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
 else:
+    # Mostrar los saldos de las cuentas por categorías
+    
+    # Mostrar las cuentas de activos
     if not activos_df.empty:
 
         st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
@@ -91,6 +95,7 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
+    # Mostrar las cuentas de pasivos
     if not pasivos_df.empty:
         st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
         st.subheader("🔴 Pasivos")      
@@ -107,6 +112,7 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
+    # Mostrar las cuentas de patrimonio
     if not patrimonio_df.empty:
         st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
         st.subheader("🟣 Patriminio")
@@ -123,6 +129,7 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
+    # Mostrar las cuentas de ingresos
     if not ingresos_df.empty:
         st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
         st.subheader("🟡 Ingresos")
@@ -139,6 +146,7 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
+    # Mostrar las cuentas de gastos
     if not gastos_df.empty:
         st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
         st.subheader("🔵 Gastos")

@@ -1,8 +1,6 @@
 import streamlit as st
 from services import obtener_saldo_tipo, obtener_variación
-import pandas as pd
 import streamlit as st
-from datetime import date, timedelta
 
 if "nombre_empresa" not in st.session_state:
     st.session_state.nombre_empresa = "Mi Empresa S.A.C."
@@ -85,11 +83,9 @@ col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,2,1,2,1,2,1,2])
 with col1:
     st.image("imagenes/activos.png", width=110)
 
-
 with col2:
     total_activo = float(obtener_saldo_tipo("Activo"))
     var_activo = float(obtener_variación("Activo",total_activo))
-
     st.metric(label="ACTIVOS TOTALES", value=total_activo, delta=f"{var_activo:.2f}%", help = None)
 
 with col3:
@@ -107,7 +103,6 @@ with col5:
 with col6:
     total_ingresos = float(obtener_saldo_tipo("Ingresos"))
     var_ingresos = float(obtener_variación("Ingresos",total_ingresos))
-
     st.metric(label="INGRESOS TOTALES", value=total_ingresos, delta=f"{var_ingresos:.2f}%",help=None)
 
 with col7:
@@ -116,7 +111,6 @@ with col7:
 with col8:
     total_gastos = float(obtener_saldo_tipo("Gastos"))
     var_gastos = float(obtener_variación("Gastos",total_gastos))
-
     st.metric(label="GASTOS TOTALES", value=total_gastos, delta=f"{var_gastos:.2f}%", help = None)
 
 

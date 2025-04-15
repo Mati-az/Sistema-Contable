@@ -1,7 +1,6 @@
 from db_connection import connect_to_db
 import streamlit as st
 import pandas as pd
-import psycopg2
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -62,7 +61,8 @@ def obtener_tipo_cuenta(cuenta_id):
         return tipo_cuenta[0]
     else:
         return None
-    
+
+# Funcion para obtener la naturaleza de la cuenta 
 def obtener_naturaleza_cuenta(cuenta_id):
     conn = connect_to_db()
     if conn:
@@ -78,7 +78,7 @@ def obtener_naturaleza_cuenta(cuenta_id):
         finally:
             conn.close()
     
-# Funcion para obtener el saldo de la cuenta
+# Funcion para obtener el saldo de UNA cuenta en especifico
 def obtener_saldo(cuenta_id):
 
     conn = connect_to_db()
@@ -100,7 +100,8 @@ def obtener_saldo(cuenta_id):
         return saldo_cuenta[0]
     else:
         return None
-    
+
+
 def get_db_version():
     conn = connect_to_db()
     query = "SELECT COUNT(*) FROM transacciones"
@@ -110,6 +111,12 @@ def get_db_version():
     cursor.close()
     return result[0]
 
+# Obtener el saldo total de todas las cuentas del mismo tipo (activo, pasivo, patrimonio, ingresos, gastos)
+# Si no se especifica la fecha de inicio, se toma como por defecto el 01-01-1900
+# Si no se especifica la fecha de fin, se toma como por defecto el día de hoy
+
+# Si yo quiero obtener el saldo total de las cuentas de algun tipo, por ejemplo activo, basta con poner
+# obtener_saldo_tipo("Activo") y me devuelve el saldo total de todas las cuentas de tipo hasta la fecha de hoy
 
 def obtener_saldo_tipo(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
     
@@ -146,6 +153,8 @@ def obtener_saldo_tipo(tipo_cuenta,fecha_inicio='1900-01-01',fecha_fin=None):
     else:
         return 0
 
+# Función para obtener la variación porcentual del total de saldo de algun tipo de cuenta (activo, pasivo, patrimonio, 
+# ingresos, gastos) respecto al saldo total de la cuenta del día anterior
 def obtener_variación(tipo_cuenta, total):
 
     saldo_hasta_dia_anterior = float(obtener_saldo_tipo(tipo_cuenta,fecha_fin=hoy.isoformat()))
@@ -413,6 +422,8 @@ def calcular_estado_capital():
         'capital_final': capital_final
     }
 
+# Obtiene las cuentas con un saldo diferente de cero segun el tipo de cuenta que se ingrese (activo, pasivo, patrimonio, 
+# ingresos, gastos)
 def obtener_saldo_cuenta(tipo_cuenta):
     conn = connect_to_db()
     if conn:

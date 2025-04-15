@@ -65,6 +65,7 @@ st.markdown(
 cuentas = obtener_cuentas()
 lista_cuentas = [f"{cuenta[0]} - {cuenta[1]}" for cuenta in cuentas]
 
+# Visual
 col1, col2, col3 = st.columns([2,1,2])
 
 with col1:
@@ -75,17 +76,19 @@ with col3:
     cuenta_abono = st.selectbox("Cuenta de Abono", lista_cuentas, help="La cuenta que será **acreditada** en la transacción.")
 
 descripcion_transaccion = st.text_area("Descripción de la transacción")
-    
+
+# Obtener ID de las cuentas seleccionadas
 if cuenta_cargo:
     cuenta_cargo_id = int(cuenta_cargo.split(' - ')[0])
 
 if cuenta_abono:
     cuenta_abono_id = int(cuenta_abono.split(' - ')[0])
 
-# Boton para la transacción
+# Boton para realizar la transacción
 if st.button("Realizar Transacción"):
     if cuenta_cargo_id != cuenta_abono_id:
-                
+
+        # Servicio de transacción
         transaccion(cuenta_cargo_id, cuenta_abono_id, monto, descripcion_transaccion)
 
     else:
@@ -95,6 +98,7 @@ if st.button("Realizar Transacción"):
 st.markdown("<hr style='border-top: 2px solid #000000;'>", unsafe_allow_html=True)
 st.subheader("📜 Historial de Transacciones")
 
+# Visual
 filtro = st.selectbox("📅 Ver transacciones de:", ["Hoy", "Últimos 7 días", "Últimos 30 días", "Personalizado"])
 
 # Calcular el rango de fechas según opción
@@ -129,6 +133,7 @@ conn = connect_to_db()
 df = pd.read_sql(query, conn, params=(fecha_ini, fecha_fin))
 df = df.reset_index(drop=True)
 
+# Boton para mostrar el historial de transacciones
 if st.button("Ver Historial"):
     st.markdown("### 📄 Transacciones registradas")
     st.dataframe(df, hide_index=True)    
